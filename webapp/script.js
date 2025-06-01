@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const buyDiscoBtn = document.getElementById('buyDisco');
     const buyDiscoOnBtn = document.getElementById('buyDiscoOn');
     let confettiDisabled = localStorage.getItem('confettiDisabled') === 'true';
-    let discoDisabled = false; // 不再持久化，仅用于兼容旧逻辑
+    let discoDisabled = localStorage.getItem('discoDisabled') === 'true';
 
     function updateShopButtons() {
         buyConfettiBtn.disabled = confettiDisabled || clickCount < 200;
@@ -81,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // 关闭蹦迪效果
             body.classList.remove('disco-mode');
             gsap.set(button, { rotation: 0 });
+            discoDisabled = true;
+            localStorage.setItem('discoDisabled', 'true');
         }
     });
 
@@ -184,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 检查是否应该启动蹦迪模式
     function checkDiscoMode() {
         if (discoDisabled) return;
-        if (clickCount >= 500) {
+        if (clickCount >= 500 && !body.classList.contains('disco-mode')) {
             body.classList.add('disco-mode');
             gsap.to(button, {
                 rotation: 360,
@@ -311,6 +313,29 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // 游戏终止函数
+    function endGame() {
+        // 停止自动点击
+        if (botInterval) {
+            clearInterval(botInterval);
+            botInterval = null;
+        }
+        
+        // 禁用所有按钮
+        button.disabled = true;
+        buyConfettiBtn.disabled = true;
+        buyDiscoBtn.disabled = true;
+        buyDiscoOnBtn.disabled = true;
+        buyBotBtn.disabled = true;
+        
+        // 显示奖励弹窗
+        svgBadgeContainer.innerHTML = generateUniqueBadgeSVG();
+        rewardModal.style.display = 'flex';
+        
+        // 播放庆祝音效和动画
+        celebrate();
+    }
+
     button.addEventListener('click', () => {
         clickCount++;
         clickCountElement.textContent = clickCount;
@@ -320,6 +345,12 @@ document.addEventListener('DOMContentLoaded', () => {
         checkDiscoMode();
         updateShopButtons();
         updateBotUI();
+
+        // 检查是否达到1000次点击
+        if (clickCount >= 1000) {
+            endGame();
+            return;
+        }
 
         // 播放动画和音效
         gsap.to(button, {
@@ -368,12 +399,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 duration: 0.5,
                 ease: "power2.out"
             });
-
-        if (clickCount === 1000) {
-            svgBadgeContainer.innerHTML = '';
-            svgBadgeContainer.innerHTML = generateUniqueBadgeSVG();
-            rewardModal.style.display = 'flex';
-        }
     });
 
     // 添加按钮悬浮效果
@@ -419,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化商店状态
     function restoreShopState() {
         confettiDisabled = localStorage.getItem('confettiDisabled') === 'true';
-        // discoDisabled = localStorage.getItem('discoDisabled') === 'true'; // 不再持久化
+        discoDisabled = localStorage.getItem('discoDisabled') === 'true';
         botCount = parseInt(localStorage.getItem('botCount') || '0', 10);
         // 只根据页面状态判断是否为蹦迪模式
         // 如果彩带已关闭，无需处理（逻辑已在shootConfetti里）
@@ -442,4 +467,24 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAchievements();
     restoreShopState();
     updateBotUI(); // 强制刷新一次机器人数量显示
+
+    // 添加快速点击功能
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'f' || e.key === 'F') {
+            clickCount += 100;
+            clickCountElement.textContent = clickCount;
+            localStorage.setItem('clickCount', clickCount);
+            updateProgress();
+            checkAchievements();
+            checkDiscoMode();
+            updateShopButtons();
+            updateBotUI();
+            
+            // 检查是否达到1000次点击
+            if (clickCount >= 1000) {
+                endGame();
+                return;
+            }
+        }
+    });
 }); 
