@@ -1,21 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Hello World</title>
+    <title>互动祝福</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
+    <div class="theme-selector">
+        <button class="theme-btn" data-theme="default">默认主题</button>
+        <button class="theme-btn" data-theme="dark">暗黑主题</button>
+        <button class="theme-btn" data-theme="nature">自然主题</button>
+    </div>
+
     <div class="container">
-        <button id="helloButton">Hello World</button>
-        <div id="blessingText" class="blessing-text"></div>
+        <div class="button-wrapper">
+            <button id="helloButton">点我有惊喜！</button>
+        </div>
+        <div class="blessing-text" id="blessingText"></div>
     </div>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <div class="milestone-markers">
+            <span class="milestone" data-count="100">100</span>
+            <span class="milestone" data-count="500">500</span>
+            <span class="milestone" data-count="1000">1000</span>
+        </div>
+    </div>
+
+    <div class="achievements-panel">
+        <h3>成就系统</h3>
+        <div class="achievements-list">
+            <div class="achievement" data-id="first-click">
+                <span class="achievement-icon">🎯</span>
+                <span class="achievement-name">初次点击</span>
+            </div>
+            <div class="achievement" data-id="hundred-clicks">
+                <span class="achievement-icon">🌟</span>
+                <span class="achievement-name">百次点击</span>
+            </div>
+            <div class="achievement" data-id="disco-mode">
+                <span class="achievement-icon">💃</span>
+                <span class="achievement-name">蹦迪模式</span>
+            </div>
+        </div>
+    </div>
+
     <div class="click-counter">
-        点击次数：<span id="clickCount">0</span>
+        点击次数: <span id="clickCount">0</span>
     </div>
+
+    <div class="reward-tip">点击达到1000可获得奖励！</div>
+
     <audio id="cheerSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+    <audio id="celebrationSound" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" preload="auto"></audio>
+    <audio id="achievementSound" src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3" preload="auto"></audio>
+
+    <button class="shop-toggle-btn" id="shopToggleBtn">🛒 商店</button>
+    <div class="shop-panel" id="shopPanel" style="display:none;">
+        <div class="shop-panel-header">
+            <h3>商店</h3>
+            <button class="shop-close-btn" id="shopCloseBtn">✖</button>
+        </div>
+        <div class="shop-item" id="shop-confetti">
+            <span>关闭彩带特效</span>
+            <button class="shop-btn" id="buyConfetti">花费200点击购买</button>
+        </div>
+        <div class="shop-item" id="shop-disco">
+            <span>关闭蹦迪模式</span>
+            <button class="shop-btn" id="buyDisco">花费500点击购买</button>
+        </div>
+        <div class="shop-item" id="shop-disco-on">
+            <span>开启蹦迪模式</span>
+            <button class="shop-btn" id="buyDiscoOn">花费150点击开启</button>
+        </div>
+        <div class="shop-item" id="shop-bot">
+            <span>自动点击机器人 <span id="botCount">0</span> 个</span>
+            <button class="shop-btn" id="buyBot">花费100点击购买</button>
+        </div>
+    </div>
+
+    <div class="reward-modal" id="rewardModal" style="display:none;">
+        <div class="reward-modal-content">
+            <button class="reward-modal-close" id="rewardModalClose">✖</button>
+            <h2>恭喜你！</h2>
+            <div id="svgBadgeContainer"></div>
+            <div class="reward-modal-desc">你已达成1000次点击，获得专属徽章！</div>
+        </div>
+    </div>
+
+    <a href="https://github.com/bugmaker2/vibecoding" class="github-link" target="_blank" title="查看GitHub仓库">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="12" fill="#24292f"/>
+        <path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.48 2.87 8.28 6.84 9.63.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.36-3.37-1.36-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z" fill="#fff"/>
+      </svg>
+    </a>
+
     <script src="script.js"></script>
 </body>
 </html> 
