@@ -1,0 +1,76 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.container {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+#helloButton {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    flex-shrink: 0;
+}
+
+#helloButton:hover {
+    transform: scale(1.05);
+}
+
+#helloButton:active {
+    transform: scale(0.95);
+}
+
+.blessing-text {
+    font-size: 24px;
+    color: #333;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.5s ease;
+    flex-grow: 1;
+    text-align: left;
+}
+
+.blessing-text.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.button-moved {
+    transform: translateX(-100px);
+}
+
+.click-counter {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.click-counter:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+} 

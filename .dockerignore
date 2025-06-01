@@ -1,0 +1,10 @@
+.git
+.gitignore
+.cursor
+.cursorignore
+.cursorindexingignore
+docs
+xnotes
+README.md
+Dockerfile
+.dockerignore 
